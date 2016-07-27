@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="astar.js"></script>
+        <style>
+            body{
+                margin:0;
+                background-color:#000;
+            }
+        </style>
+        <script>
+            let graph = {
+                nodes: {
+                    1: {x: 0, y: 0},
+                    2: {x: 2, y: 1},
+                    3: {x: 4, y: 1},
+                    4: {x: 6, y: 1},
+                    5: {x: 3, y: 2},
+                    6: {x: 4, y: 2},
+                    7: {x: 3, y: 4},
+                    8: {x: 5, y: 4}
+                },
+                connections: [
+                    {p1: 1, p2: 2},
+                    {p1: 2, p2: 3},
+                    {p1: 2, p2: 7},
+                    {p1: 3, p2: 4},
+                    {p1: 3, p2: 5},
+                    {p1: 3, p2: 6},
+                    {p1: 4, p2: 8},
+                    {p1: 5, p2: 7},
+                    {p1: 7, p2: 8}
+                ],
+            };
+            astarPreProcess(graph);
+            findPath(graph, 1, 7);
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
