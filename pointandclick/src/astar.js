@@ -41,14 +41,19 @@ function findPath(g, i, j) {
 
         if (currentNode.i == finalNode.i) 
         {
-            let ret = [];
-            ret.push(currentNode.i);
+            let path = [];
+            let finalDistance = currentNode.g;
+            path.push(currentNode.i);
             while (currentNode.p != null)
             {
-                ret.push(currentNode.p.i);
+                path.push(currentNode.p.i);
                 currentNode = currentNode.p;
             }
-            return ret.reverse();
+            let ret = {
+                path: path.reverse(),
+                distance: finalDistance
+            };
+            return ret;
         }
 
         closedList.push(currentNode);

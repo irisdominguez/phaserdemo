@@ -56,7 +56,9 @@ mainMap.prototype = {
 
         if (oldTarget != target)
         {
-            let nodePath = findPath(leveldata, current, target);
+            let astarRet = findPath(leveldata, current, target);
+            let nodePath = astarRet.path;
+            let distance = astarRet.distance / 400;
             let pointsx = [];
             let pointsy = [];
             for (let ni in nodePath)
@@ -65,7 +67,8 @@ mainMap.prototype = {
                 pointsy.push(leveldata.nodes[nodePath[ni]].y);
             }
             path = [];
-            for (let i=0; i <= 1; i+=0.01)
+            let inc = 1.0 / (distance * 60);
+            for (let i=0; i <= 1; i+=inc)
             {
                 let px = this.math.catmullRomInterpolation(pointsx, i);
                 let py = this.math.catmullRomInterpolation(pointsy, i);
