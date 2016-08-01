@@ -3,6 +3,7 @@ var mainMap = function(game){
     current = 1;
     target = 1;
     path = [];
+    pathdelta = 0.0;
     leveldata = null;
 }
 
@@ -43,42 +44,41 @@ mainMap.prototype = {
         this.updatePath();
         if (path.length > 0)
         {
-            let newPosition = path[0];
-            path.shift();
+            let increment = 1.0 / 30;
+            pathdelta += increment;
+
+            if (pathdelta >= 1.0)
+            {
+                current = path[0];
+                path.shift();
+                pathdelta = 0.0;
+            }
+        }
+
+        if (path.length > 0)
+        {
+            let next = path[0];
+            let nextPoint = leveldata.nodes[next];
+            let currentPoint = leveldata.nodes[current];
+
+            let newPosition = {};
+            newPosition.x = currentPoint.x * (1.0 - pathdelta) + nextPoint.x * pathdelta;
+            newPosition.y = currentPoint.y * (1.0 - pathdelta) + nextPoint.y * pathdelta;
+
             player.x = newPosition.x;
             player.y = newPosition.y;
         }
     },
     updatePath: function(){
         let oldTarget = target;
-        this.updatePlayerNode();
         this.updateTarget();
 
         if (oldTarget != target)
         {
             let astarRet = findPath(leveldata, current, target);
-            let nodePath = astarRet.path;
-            let distance = astarRet.distance / 400;
-            let pointsx = [];
-            let pointsy = [];
-            for (let ni in nodePath)
-            {
-                pointsx.push(leveldata.nodes[nodePath[ni]].x);
-                pointsy.push(leveldata.nodes[nodePath[ni]].y);
-            }
-            path = [];
-            let inc = 1.0 / (distance * 60);
-            for (let i=0; i <= 1; i+=inc)
-            {
-                let px = this.math.catmullRomInterpolation(pointsx, i);
-                let py = this.math.catmullRomInterpolation(pointsy, i);
-
-                path.push( {x: px, y: py});
-            }
+            path = astarRet.path;
+            path.shift();
         }
-    },
-    updatePlayerNode: function(){
-        current = this.closerPoint(player.x, player.y);
     },
     updateTarget: function(){
         if (game.input.activePointer.leftButton.isDown)
