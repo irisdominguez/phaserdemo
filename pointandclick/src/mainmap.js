@@ -103,7 +103,7 @@ mainMap.prototype = {
         }
     },
     updateTarget: function(){
-        if (game.input.activePointer.leftButton.isDown)
+        if (game.input.activePointer.isDown)
         {
             let mousePosition = Phaser.Point.add(game.input.activePointer.positionDown, game.camera);
             target = this.closerPoint(mousePosition.x, mousePosition.y);
