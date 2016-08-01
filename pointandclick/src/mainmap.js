@@ -5,6 +5,8 @@ var mainMap = function(game){
     path = [];
     pathdelta = 0.0;
     leveldata = null;
+
+    tmp_distance = {};
 }
 
 mainMap.prototype = {
@@ -42,9 +44,11 @@ mainMap.prototype = {
 	},
     update: function(){
         this.updatePath();
+        this.updateDistance();
         if (path.length > 0)
         {
             let increment = 1.0 / 30;
+            increment /= tmp_distance.d / 200;
             pathdelta += increment;
 
             if (pathdelta >= 1.0)
@@ -76,8 +80,26 @@ mainMap.prototype = {
         if (oldTarget != target)
         {
             let astarRet = findPath(leveldata, current, target);
-            path = astarRet.path;
-            path.shift();
+            if (path.length === 0)
+            {
+                path = astarRet.path;
+                path.shift();
+            }
+            else
+            {
+                let from = current;
+                let to = path[0];
+                path = astarRet.path;
+                if (to == path[1])
+                {
+                    path.shift();
+                }
+                else
+                {
+                    current = to;
+                    pathdelta = 1.0 - pathdelta;
+                }
+            }
         }
     },
     updateTarget: function(){
@@ -104,5 +126,27 @@ mainMap.prototype = {
             }
         }
         return best;
+    },
+    updateDistance: function(){
+        if (path.length == 0)
+        {
+            tmp_distance = {};
+        }
+        else
+        {
+            if(tmp_distance.current !== current ||
+                tmp_distance.next !== path[0])
+            {
+                tmp_distance.current === current;
+                tmp_distance.next === path[0];
+                let p1 = new Phaser.Point(
+                        leveldata.nodes[current].x,
+                        leveldata.nodes[current].y);
+                let p2 = new Phaser.Point(
+                        leveldata.nodes[path[0]].x,
+                        leveldata.nodes[path[0]].y);
+                tmp_distance.d = p1.distance(p2);
+            }
+        }
     }
 }
