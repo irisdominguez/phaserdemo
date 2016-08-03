@@ -9,6 +9,14 @@ var mainMap = function(game){
     tmp_distance = {};
 }
 
+function range(start, end) {
+    var foo = [];
+    for (var i = start; i <= end; i++) {
+        foo.push(i);
+    }
+    return foo;
+}
+
 mainMap.prototype = {
     preload: function(){
         this.load.text('mainlevel', 'assets/data/pathbg.json');
@@ -32,12 +40,16 @@ mainMap.prototype = {
         game.world.setBounds(0, 0, background.width * background.scale.x,
                 background.height * background.scale.y);
 
-		player = game.add.sprite(0, 0, "miguy");
+		player = game.add.sprite(0, 0, "professor");
 		player.anchor.setTo(0.5, 1.0);
-        player.scale.setTo(0.5);
+        player.scale.setTo(1.5);
         player.x = leveldata.nodes[1].x;
         player.y = leveldata.nodes[1].y;
         game.camera.follow(player);
+        player.animations.add('north', range(0, 8), 10, true);
+        player.animations.add('west', range(9, 17), 10, true);
+        player.animations.add('south', range(18, 26), 10, true);
+        player.animations.add('east', range(27, 35), 10, true);
 
         // Interaction
         game.input.mouse.capture = true;
@@ -47,6 +59,28 @@ mainMap.prototype = {
         this.updateDistance();
         if (path.length > 0)
         {
+            if (pathdelta == 0.0)
+            {
+                let a = tmp_distance.a;
+                console.log(a);
+                if (-45 < a && a <= 45)
+                {
+                    player.play('east');
+                }
+                else if (-135 < a && a <= -45)
+                {
+                    player.play('north');
+                }
+                else if (45 < a && a <= 135)
+                {
+                    player.play('south');
+                }
+                else
+                {
+                    player.play('west');
+                }
+            }
+
             let increment = 1.0 / 30;
             increment /= tmp_distance.d / 200;
             pathdelta += increment;
@@ -56,6 +90,11 @@ mainMap.prototype = {
                 current = path[0];
                 path.shift();
                 pathdelta = 0.0;
+
+                if (path.length == 0)
+                {
+                    player.animations.stop();
+                }
             }
         }
 
@@ -146,6 +185,8 @@ mainMap.prototype = {
                         leveldata.nodes[path[0]].x,
                         leveldata.nodes[path[0]].y);
                 tmp_distance.d = p1.distance(p2);
+                tmp_distance.a = p1.angle(p2, true);
+                console.log(tmp_distance.a);
             }
         }
     }
