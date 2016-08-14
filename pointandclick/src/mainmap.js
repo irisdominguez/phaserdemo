@@ -33,6 +33,10 @@ mainMap.prototype = {
         astarPreProcess(leveldata);
         console.log(leveldata);
 
+		this.backgroundz2 = game.add.tileSprite(0,0,1920,400,"pathbg-z2");
+		this.backgroundz2.anchor.setTo(0,0);
+        this.backgroundz2.scale.setTo(game.height / this.backgroundz2.height);
+
 		var background = game.add.tileSprite(0,0,1920,400,"pathbg");
 		background.anchor.setTo(0,0);
         background.scale.setTo(game.height / background.height);
@@ -111,6 +115,7 @@ mainMap.prototype = {
             player.x = newPosition.x;
             player.y = newPosition.y;
         }
+        this.backgroundz2.x = game.camera.x * 0.5;
     },
     updatePath: function(){
         let oldTarget = target;
