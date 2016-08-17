@@ -6,6 +6,9 @@ var mainMap = function(game){
     pathdelta = 0.0;
     leveldata = null;
 
+    cameraZ = -2.5;
+    scaleRefZ = 2.0;
+
     tmp_distance = {};
 }
 
@@ -46,7 +49,7 @@ mainMap.prototype = {
 
 		player = game.add.sprite(0, 0, "professor");
 		player.anchor.setTo(0.5, 1.0);
-        player.scale.setTo(1.5);
+        player.scale.setTo(1);
         player.x = leveldata.nodes[1].x;
         player.y = leveldata.nodes[1].y;
         game.camera.follow(player);
@@ -66,7 +69,6 @@ mainMap.prototype = {
             if (pathdelta == 0.0)
             {
                 let a = tmp_distance.a;
-                console.log(a);
                 if (-45 < a && a <= 45)
                 {
                     player.play('east');
@@ -111,9 +113,13 @@ mainMap.prototype = {
             let newPosition = {};
             newPosition.x = currentPoint.x * (1.0 - pathdelta) + nextPoint.x * pathdelta;
             newPosition.y = currentPoint.y * (1.0 - pathdelta) + nextPoint.y * pathdelta;
+            newPosition.z = currentPoint.z * (1.0 - pathdelta) + nextPoint.z * pathdelta;
 
             player.x = newPosition.x;
             player.y = newPosition.y;
+
+            let scale = (scaleRefZ - cameraZ) / (newPosition.z - cameraZ) ;
+            player.scale.setTo(scale);
         }
         this.backgroundz2.x = game.camera.x * 0.5;
     },
@@ -191,7 +197,6 @@ mainMap.prototype = {
                         leveldata.nodes[path[0]].y);
                 tmp_distance.d = p1.distance(p2);
                 tmp_distance.a = p1.angle(p2, true);
-                console.log(tmp_distance.a);
             }
         }
     }
